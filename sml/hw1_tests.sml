@@ -11,7 +11,9 @@ val test_date_is_reasonable =
   date_is_reasonable(1, 1, 32) = false andalso
   date_is_reasonable(1, 1, 31) = true andalso
   date_is_reasonable(1, 2, 29) = false andalso
-  date_is_reasonable(1, 2, 28) = true
+  date_is_reasonable(2012, 2, 29) = true andalso
+  date_is_reasonable(2000, 2, 29) = true andalso
+  date_is_reasonable(1900, 2, 29) = false
 
 val test_day_of_year =
   get_day_of_year(1, 2, 2) = 33 andalso

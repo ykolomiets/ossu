@@ -22,12 +22,25 @@ fun date_is_reasonable(date: int * int * int) =
       year > 0
     fun is_reasonable_month(month: int) =
       month >= 1 andalso month <= 12
-    fun is_reasonable_day(month: int, day: int) = 
-      day > 0 andalso day <= get_element_by_index(days_in_month, month - 1)
+    fun is_reasonable_day(year: int, month: int, day: int) = 
+      let
+        fun get_days_in_month(month: int, year: int) =
+          let
+            fun is_leap_year(year: int) = 
+              (year mod 400) = 0 orelse ((year mod 4 = 0) andalso (year mod 100 <> 0))
+            val days = get_element_by_index(days_in_month, month - 1)
+          in
+            if month = 2 andalso is_leap_year(year)
+            then days + 1
+            else days
+          end
+      in
+        day > 0 andalso day <= get_days_in_month(month, year)
+      end
   in
     is_reasonable_year(get_year(date)) andalso
     is_reasonable_month(get_month(date)) andalso
-    is_reasonable_day(get_month(date), get_day(date))
+    is_reasonable_day(date)
   end
 
 fun get_day_of_year(date: int * int * int) =
@@ -119,3 +132,29 @@ fun oldest(dates: (int * int * int) list) =
     in
       SOME(unsafe_oldest(dates))
     end
+
+fun distinct(xs: int list) =
+  let
+    fun distinct_internal(xs: int list, to_exclude: int list) =
+      let
+        fun contains(ys: int list, y: int) = 
+          not (null ys) andalso (hd ys = y orelse contains(tl ys, y))
+      in
+        if null xs
+        then []
+        else
+          if contains(to_exclude, hd xs)
+          then distinct_internal(tl xs, to_exclude)
+          else hd xs :: distinct_internal(tl xs, hd xs :: to_exclude)
+      end
+  in
+    distinct_internal(xs, [])
+  end
+
+fun number_in_months_challenge(dates: (int * int * int) list, months: int list) = 
+  number_in_months(dates, distinct(months))
+
+fun dates_in_months_challenge(dates: (int * int * int) list, months: int list) = 
+  dates_in_months(dates, distinct(months))
+
+  

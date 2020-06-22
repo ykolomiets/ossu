@@ -141,7 +141,9 @@ fun match (v, p) =
      | (Constructor (x_name, x_value), ConstructorP (y_name, y_pattern))
           => if x_name = y_name then match(x_value, y_pattern) else NONE
      | (Tuple vs, TupleP ps)    => 
-         all_answers match (ListPair.zip(vs, ps))
+         if List.length vs <> List.length ps
+         then NONE
+         else all_answers match (ListPair.zip(vs, ps))
      | (v, Wildcard)            => SOME []
      | _                        => NONE
 
